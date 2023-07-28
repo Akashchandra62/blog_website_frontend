@@ -135,6 +135,8 @@ $lightGreen: #b9e7e7;
 
         .post {
           display: flex;
+
+          align-items: center;
           gap: 100px;
 
           &:nth-child(2n + 1) {
@@ -170,7 +172,7 @@ $lightGreen: #b9e7e7;
             justify-content: space-between;
 
             h1 {
-              font-size: 48px;
+              font-size: 40px;
             }
 
             p {
@@ -251,6 +253,7 @@ $lightGreen: #b9e7e7;
         p {
           text-align: justify;
           line-height: 30px;
+          margin: 0;
         }
       }
       .menu {
@@ -337,34 +340,34 @@ $lightGreen: #b9e7e7;
         .item {
           border: 1px solid lightgray;
           padding: 10px;
-          flex:1;
+          flex: 1;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
           font-size: 12px;
           color: #555;
 
-          h1{
+          h1 {
             font-size: 20px;
           }
 
-          .file{
+          .file {
             text-decoration: underline;
             cursor: pointer;
           }
 
-          .buttons{
+          .buttons {
             display: flex;
             justify-content: space-between;
 
-            :first-child{
+            :first-child {
               cursor: pointer;
               color: teal;
               background-color: white;
               border: 1px solid teal;
               padding: 3px 5px;
             }
-            :last-child{
+            :last-child {
               cursor: pointer;
               color: white;
               background-color: teal;
@@ -373,7 +376,7 @@ $lightGreen: #b9e7e7;
             }
           }
 
-          .cat{
+          .cat {
             display: flex;
             align-items: center;
             gap: 2px;
