@@ -1,58 +1,69 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Edit from "../img/edit.png";
 import Delete from "../img/delete.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Menu from "../components/Menu";
+import api from "../api/api.js";
+import moment from "moment";
+import { AuthContext } from "../context/authContext";
 
 const Single = () => {
+  const [post, setPost] = useState({});
+  const location = useLocation();
+  const postId = location.pathname.split("/")[2];
+
+  const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleDelete = async (e) => {
+    try {
+      const res = await api.delete(`posts/${postId}`);
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await api.get(`/posts/${postId}`);
+        setPost(res.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [postId]);
+
+  const getText = (html) => {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    return doc.body.textContent;
+  };
+
   return (
     <div className="single">
       <div className="content">
-        <img
-          src="https://images.unsplash.com/photo-1599379126660-d10b7e1831c8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
-          alt="Image"
-        />
+        <img src={`../upload/${post?.img}`} alt="Image" />
         <div className="user">
-          <img
-            src="https://images.unsplash.com/photo-1599379126660-d10b7e1831c8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
-            alt="Image"
-          />
+          {post.user?.img && <img src={post.user.img} alt="Image" />}
           <div className="info">
-            <span>John</span>
-            <p>Posted 2 days ago</p>
+            <span>{post.user?.username}</span>
+            <p>Posted {moment(post.date).fromNow()} days ago</p>
           </div>
-          <div className="edit">
-            <Link to={`/write?edit=2`}>
-              <img src={Edit} alt="Edit" />
-            </Link>
-            <img src={Delete} alt="Delete" />
-          </div>
+          {currentUser.id === post.user?.id && (
+            <div className="edit">
+              <Link to={`/write?edit=2`} state={post}>
+                <img src={Edit} alt="Edit" />
+              </Link>
+              <img onClick={handleDelete} src={Delete} alt="Delete" />
+            </div>
+          )}
         </div>
-        <h1>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi,
-          rerum
-        </h1>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea totam
-          fugit eius laboriosam enim dignissimos exercitationem doloremque vero
-          quam! Veritatis, officiis esse praesentium cumque assumenda odit
-          laborum voluptate illum. Id quaerat adipisci odit exercitationem,
-          eaque ullam vel impedit officiis sit dolore molestiae molestias culpa
-          perspiciatis natus voluptas, porro est libero! Lorem ipsum dolor sit
-          amet consectetur adipisicing elit. Illum asperiores ea facilis vel a
-          laboriosam sed non nesciunt delectus recusandae cupiditate dolor
-          voluptate tempora laborum explicabo cumque ex expedita dolore minima,
-          quo, ipsam id aspernatur dolores. Dolorum nihil unde sunt accusamus
-          magnam maxime nemo asperiores a voluptatum, quod aspernatur recusandae
-          expedita alias aut minus officiis laboriosam fugiat ratione non soluta
-          iusto! Vero, nesciunt ducimus. Cupiditate maxime tempora, enim placeat
-          eligendi, in nobis harum sunt corrupti, alias sint consequuntur
-          suscipit a vero quis aliquid et ducimus. Totam unde quod autem omnis
-          expedita beatae nesciunt rerum consectetur temporibus reprehenderit?
-          Asperiores, perferendis nulla.
-        </p>
+        <h1 style={{ marginTop: "0px", marginBottom: "0px" }}>{post.title}</h1>
+        {getText(post.desc)}
       </div>
-      <Menu />
+      <Menu cat={post.cat} />
     </div>
   );
 };
